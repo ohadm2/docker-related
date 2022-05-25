@@ -95,6 +95,8 @@ alias la='ls -A'
 alias g='grep'
 
 alias a='alias'
+alias cls='clear'
+alias vf='cd'
 
 alias watch='watch '
 alias w=watch
