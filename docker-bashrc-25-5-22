@@ -113,7 +113,8 @@ alias rmc='xargs -I {} docker kill {}'
 alias rmi='xargs -I {} docker rmi -f {}'
 alias t='docker tag'
 alias r='docker run'
-alias e='docker exec'
+alias e=dockerShell
+alias ex='docker exec'
 alias ig='docker images | grep '
 alias gi=ig
 alias rmif='docker rmi -f'
@@ -144,7 +145,25 @@ alias li=lasti
 # crashes: alias shl='r -it $(li) bash > /dev/null ; if ! [ "$" -eq 0 ]; then r -it $(li) ash; fi'
 
 alias shl='r -it $(li) bash'
- 
+
+function dockerShell()
+{
+	docker ps | grep $1 &>/dev/null
+	
+	# if match
+	if [ "$?" -eq 0 ]; then
+		BASH_STATUS=$(docker exec $1 which bash)
+
+		if ! [ -z "$BASH_STATUS" ]; then
+			docker exec -it $1 bash
+		else
+			docker exec -it $1 ash
+		fi
+	else
+		echo "ERROR! Container '$1' was not found."
+	fi
+}
+
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
